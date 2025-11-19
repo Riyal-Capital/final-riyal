@@ -1,491 +1,562 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <title>Riyal Capital | The Distribution Engine</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Global distribution for Hedge Funds, Private Equity, and Corporate Capital Raises. Powered by AI and a network of 4,000+ institutional investors." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Riyal Capital: Enterprise-grade fundraising distribution for Hedge Funds, PE, and Corporate Raises." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg: #020617;
-      --bg-card: rgba(15, 23, 42, 0.7);
-      --accent: #38bdf8; /* Sky Blue */
-      --accent-glow: rgba(56,189,248,0.5);
-      --text: #f1f5f9;
-      --text-dim: #94a3b8;
-      --border: rgba(148, 163, 184, 0.1);
-      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      --bg-dark: #020408;
+      --bg-card: rgba(12, 17, 28, 0.6);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.3);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-light: rgba(255, 255, 255, 0.08);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+    
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
       overflow-x: hidden;
-      position: relative;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* --- ANIMATED BACKGROUNDS --- */
-    .video-layer {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      object-fit: cover; z-index: -2; opacity: 0.4;
-      filter: contrast(1.2) saturate(1.1);
+    h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+    
+    a, button { cursor: pointer; }
+
+    /* --- UTILITIES --- */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+    .text-gradient {
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .text-accent { color: var(--accent); }
+    
+    /* --- SPOTLIGHT EFFECT & CARDS --- */
+    .spotlight-group {
+      display: grid; gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     }
     
-    .overlay-gradient {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(2,6,23,0.8), var(--bg));
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s var(--ease-out);
+      backdrop-filter: blur(10px);
+    }
+    
+    .card:hover { transform: translateY(-5px); }
+
+    /* The moving glow border */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 16px;
+      padding: 1px;
+      background: radial-gradient(
+        600px circle at var(--mouse-x) var(--mouse-y),
+        rgba(255, 255, 255, 0.4),
+        transparent 40%
+      );
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    /* The inner glow */
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(
+        600px circle at var(--mouse-x) var(--mouse-y),
+        rgba(56, 189, 248, 0.06),
+        transparent 40%
+      );
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
       z-index: -1;
     }
 
-    /* --- UTILITIES --- */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
-    .text-accent { color: var(--accent); }
-    .text-center { text-align: center; }
-    
+    .spotlight-group:hover .card::before,
+    .spotlight-group:hover .card::after { opacity: 1; }
+
     /* --- HEADER --- */
     header {
       position: fixed; top: 0; width: 100%; z-index: 100;
-      padding: 1.5rem 0; transition: 0.4s var(--ease);
+      transition: 0.4s;
       border-bottom: 1px solid transparent;
     }
     header.scrolled {
-      background: rgba(2, 6, 23, 0.9);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 0;
+      background: rgba(2, 4, 8, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
     }
-    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
-    
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; }
-    .logo img { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); }
-    .logo-text { text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; font-size: 1.1rem; }
-
-    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-inner {
+      display: flex; justify-content: space-between; align-items: center;
+      height: 80px;
+    }
+    .logo img { height: 40px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a {
-      color: var(--text-dim); text-decoration: none; font-size: 0.85rem; 
-      text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s;
+      color: var(--text-muted); text-decoration: none; font-size: 0.9rem;
+      transition: 0.3s; font-weight: 500;
     }
-    .nav-links a:hover { color: white; text-shadow: 0 0 8px var(--accent); }
+    .nav-links a:hover { color: #fff; }
 
-    .btn-glow {
-      background: transparent; border: 1px solid var(--accent); color: var(--accent);
-      padding: 0.6rem 1.5rem; border-radius: 50px; cursor: pointer;
-      font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;
-      transition: 0.3s; box-shadow: 0 0 10px rgba(56,189,248,0.1);
-    }
-    .btn-glow:hover {
-      background: var(--accent); color: #000;
-      box-shadow: 0 0 25px var(--accent-glow);
-    }
-
-    /* --- HERO SECTION --- */
-    .hero {
-      position: relative; height: 100vh; min-height: 750px;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; overflow: hidden;
-    }
-    .hero-content { position: relative; z-index: 10; max-width: 900px; padding: 0 1rem; }
-    
-    .eyebrow {
-      display: inline-block; padding: 0.5rem 1.2rem;
-      background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 100px; margin-bottom: 2rem;
-      color: var(--accent); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
-      animation: pulse 3s infinite;
-    }
-
-    h1 {
-      font-size: clamp(3.5rem, 6vw, 5.5rem); line-height: 1.1; font-weight: 800;
-      margin-bottom: 2rem; letter-spacing: -0.02em;
-    }
-    .shimmer-text {
-      background: linear-gradient(90deg, #fff 0%, #38bdf8 50%, #fff 100%);
-      background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      animation: shimmer 5s linear infinite;
-    }
-
-    .hero p { font-size: 1.2rem; color: var(--text-dim); max-width: 650px; margin: 0 auto 3rem; }
-
-    .hero-stats {
-      display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
-      margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
-    }
-    .stat-block strong { display: block; font-size: 2.5rem; color: white; line-height: 1; margin-bottom: 0.5rem; }
-    .stat-block span { color: var(--accent); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
-
-    /* --- SECTIONS --- */
-    section { padding: 8rem 0; position: relative; overflow: hidden; }
-    .section-title { font-size: 3rem; margin-bottom: 1.5rem; font-weight: 700; }
-    .section-desc { font-size: 1.1rem; color: var(--text-dim); max-width: 600px; margin-bottom: 4rem; }
-
-    /* --- CARDS & GRID --- */
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
-    
-    .glass-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 24px; padding: 2.5rem;
-      transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.3s;
-      position: relative; overflow: hidden;
-    }
-    .glass-card:hover {
-      transform: translateY(-10px); border-color: var(--accent);
-      box-shadow: 0 20px 60px -20px rgba(56,189,248,0.3);
-    }
-    .glass-card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: white; }
-    .glass-card p { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; }
-    .glass-card ul { list-style: none; }
-    .glass-card li { margin-bottom: 0.8rem; color: #cbd5e1; font-size: 0.9rem; display: flex; gap: 0.5rem; }
-    .glass-card li::before { content: "▹"; color: var(--accent); }
-
-    /* --- PROCESS STEPS (Vertical) --- */
-    .process-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 900px; margin: 0 auto; }
-    .step-card {
-      display: grid; grid-template-columns: 80px 1fr; gap: 2rem;
-      background: linear-gradient(90deg, rgba(15,23,42,0.8), transparent);
-      border-left: 2px solid var(--border); padding: 2rem;
+    .btn-primary {
+      background: #fff; color: #000;
+      padding: 0.7rem 1.5rem; border-radius: 99px;
+      font-weight: 600; font-size: 0.9rem;
+      border: 1px solid #fff;
       transition: 0.3s;
     }
-    .step-card:hover { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(15,23,42,1), rgba(56,189,248,0.05)); }
-    .step-num { font-size: 3rem; font-weight: 800; color: rgba(255,255,255,0.1); line-height: 1; }
-    .step-content h4 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent); }
-
-    /* --- DISTRIBUTION ENGINE (Tech) --- */
-    .tech-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-    .tech-visual {
-      position: relative; height: 400px; border-radius: 24px; overflow: hidden;
-      border: 1px solid var(--border); box-shadow: 0 0 50px rgba(56,189,248,0.1);
+    .btn-primary:hover {
+      background: transparent; color: #fff;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
     }
-    .tech-visual img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* --- CONTACT FORM --- */
-    .form-wrapper {
-      background: #0f172a; border-radius: 30px; padding: 3rem;
-      border: 1px solid var(--border); max-width: 700px; margin: 0 auto;
-      box-shadow: 0 0 80px rgba(0,0,0,0.5);
+    /* --- HERO --- */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      position: relative; overflow: hidden; padding-top: 80px;
     }
-    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: var(--text-dim); }
+    .hero-video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: -2; opacity: 0.5;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(to bottom, rgba(2,4,8,0.7), #020408);
+    }
+    
+    .hero h1 {
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.1; font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .shimmer {
+      background: linear-gradient(to right, #38bdf8 20%, #fff 50%, #38bdf8 80%);
+      background-size: 200% auto;
+      background-clip: text; -webkit-background-clip: text;
+      text-fill-color: transparent; -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer { to { background-position: 200% center; } }
+
+    /* --- STATS --- */
+    .stats-bar {
+      display: flex; gap: 3rem; margin-top: 3rem;
+      padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat h4 { font-size: 2.5rem; font-weight: 700; color: #fff; }
+    .stat p { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* --- ENGINE SECTION (Abstract) --- */
+    .engine-section { position: relative; padding: 8rem 0; overflow: hidden; }
+    .tech-video {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.2; mix-blend-mode: screen;
+    }
+
+    /* --- MAP SECTION --- */
+    .map-container {
+      position: relative; margin: 4rem auto; max-width: 1000px;
+    }
+    .map-img { width: 100%; opacity: 0.6; }
+    .hotspot {
+      position: absolute; width: 12px; height: 12px; background: var(--accent);
+      border-radius: 50%; box-shadow: 0 0 20px var(--accent);
+      animation: pulse 2s infinite;
+    }
+    .hotspot::after {
+      content: ''; position: absolute; inset: -8px; border: 1px solid var(--accent);
+      border-radius: 50%; opacity: 0; animation: ripple 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } }
+    @keyframes ripple { 0% { transform: scale(0.5); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+
+    /* --- PRICING --- */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem; margin-top: 3rem;
+    }
+    .price-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+      border: 1px solid var(--border-light); padding: 2rem; border-radius: 12px;
+    }
+    .price-val { font-size: 2rem; font-weight: 700; color: #fff; margin: 1rem 0; }
+
+    /* --- FORM --- */
+    .form-box {
+      background: #0a0f18; border: 1px solid var(--border-light);
+      border-radius: 24px; padding: 3rem; max-width: 800px; margin: 0 auto;
+      box-shadow: 0 0 100px rgba(0,0,0,0.8);
+    }
     input, select, textarea {
-      width: 100%; background: rgba(2,6,23,0.6); border: 1px solid var(--border);
-      padding: 1rem; border-radius: 12px; color: white; outline: none;
-      transition: 0.3s; font-family: inherit;
+      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-light);
+      color: #fff; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;
+      font-family: 'Inter', sans-serif; transition: 0.3s; outline: none;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow);
+    }
 
     /* --- ANIMATIONS --- */
-    @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(56,189,248,0.4); } 70% { box-shadow: 0 0 0 10px rgba(56,189,248,0); } 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0); } }
-
-    .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s var(--ease); }
+    .reveal { opacity: 0; transform: translateY(40px); transition: 1s var(--ease-out); }
     .reveal.active { opacity: 1; transform: translateY(0); }
-
-    /* MOBILE */
-    @media(max-width: 768px) {
-      h1 { font-size: 3rem; }
-      .tech-layout { grid-template-columns: 1fr; }
+    
+    /* Mobile Nav */
+    @media (max-width: 768px) {
       .nav-links { display: none; }
-      .input-row { grid-template-columns: 1fr; }
+      h1 { font-size: 3rem; }
+      .stats-bar { flex-wrap: wrap; gap: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
   <header id="header">
-    <div class="container nav-flex">
+    <div class="container nav-inner">
       <a href="#" class="logo">
-        <img src="lion-logo.png" alt="Riyal Lion">
-        <div class="logo-text">Riyal Capital</div>
+        <img src="logo-lion.png" alt="Riyal Capital">
       </a>
-      <ul class="nav-links">
-        <li><a href="#approach">Approach</a></li>
-        <li><a href="#solutions">Solutions</a></li>
-        <li><a href="#process">Process</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-      <button class="btn-glow" onclick="document.getElementById('contact').scrollIntoView()">Book Triage</button>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#engine">The Engine</a></li>
+          <li><a href="#solutions">Solutions</a></li>
+          <li><a href="#global">Global Reach</a></li>
+          <li><a href="#fees">Fees</a></li>
+        </ul>
+      </nav>
+      <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+        Book Triage Call
+      </button>
     </div>
   </header>
 
-  <section class="hero">
-    <video class="video-layer" autoplay muted loop playsinline>
-      <source src="hero-background.mp4" type="video/mp4">
-    </video>
-    <div class="overlay-gradient"></div>
+  <main>
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline poster="">
+        <source src="hero-background.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
 
-    <div class="hero-content">
-      <div class="eyebrow reveal">Distribution First Capital Advisory</div>
-      <h1 class="reveal" style="transition-delay: 0.1s;">
-        The Engine for <br/>
-        <span class="shimmer-text">Global Capital.</span>
-      </h1>
-      <p class="reveal" style="transition-delay: 0.2s;">
-        We don't just make introductions. We run enterprise-grade distribution campaigns targeting 50,000+ institutional investors to scale your fund or close your round.
-      </p>
-      
-      <div class="reveal" style="transition-delay: 0.3s;">
-        <button class="btn-glow" style="padding: 1rem 2.5rem; font-size: 0.9rem;" onclick="document.getElementById('solutions').scrollIntoView()">
-          Explore Mandates
-        </button>
-      </div>
-
-      <div class="hero-stats reveal" style="transition-delay: 0.4s;">
-        <div class="stat-block">
-          <strong data-target="4000">0</strong>
-          <span>Personal Contacts</span>
-        </div>
-        <div class="stat-block">
-          <strong data-target="2000">0</strong>
-          <span>Daily Touches</span>
-        </div>
-        <div class="stat-block">
-          <strong data-target="100">0</strong>
-          <span>$M+ Transactions</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="approach">
-    <div class="container tech-layout">
-      <div class="reveal">
-        <span class="text-accent" style="letter-spacing:0.2em; text-transform:uppercase; font-size:0.8rem;">Our Philosophy</span>
-        <h2 class="section-title">More Than Investment Banking.</h2>
-        <p style="margin-bottom: 1.5rem; color: var(--text-dim);">
-          Most firms focus on the pitch deck. We focus on the phone lines. Born from a major Canadian investment bank, Riyal Capital pivoted to solve the hardest problem in finance: <strong>Distribution at Scale.</strong>
-        </p>
-        <p style="margin-bottom: 1.5rem; color: var(--text-dim);">
-          We utilize proprietary AI/ML software layered over major global databases to target Sovereign Wealth Funds, Pensions, and Family Offices in MENA, Asia, and North America.
-        </p>
-        <ul style="list-style:none; color: white;">
-          <li style="margin-bottom:0.5rem;">✓ 4,000+ Personal Institutional Relationships</li>
-          <li style="margin-bottom:0.5rem;">✓ 50,000+ Curated Investor Database</li>
-          <li style="margin-bottom:0.5rem;">✓ 1,000–2,000 Outbound touches per day</li>
-        </ul>
-      </div>
-      <div class="tech-visual reveal" style="transition-delay: 0.2s;">
-        <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
-          <source src="network-lines.mp4" type="video/mp4">
-        </video>
-        <div style="position:absolute; bottom:20px; left:20px; background:rgba(0,0,0,0.7); padding:10px; border-radius:8px; border:1px solid var(--accent);">
-          <div style="color:var(--accent); font-size:0.8rem; font-weight:bold;">SYSTEM ACTIVE</div>
-          <div style="color:white; font-size:0.7rem;">Global Outreach: ONLINE</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="solutions" style="background: rgba(255,255,255,0.02);">
-    <div class="container">
-      <div class="text-center reveal">
-        <h2 class="section-title">Targeted Mandates</h2>
-        <p class="section-desc" style="margin: 0 auto 4rem;">Whether you are scaling AUM or exiting a portfolio company, our system adapts to your liquidity and sector needs.</p>
-      </div>
-
-      <div class="grid-3">
-        <div class="glass-card reveal">
-          <div style="font-size:2rem; margin-bottom:1rem;">📊</div>
-          <h3>Hedge Fund Distribution</h3>
-          <p>Scale your LP base with investors whose mandate matches your horizon and tax efficiency.</p>
-          <ul>
-            <li>Targeting Endowments & Pensions</li>
-            <li>Focus on AUM Scaling</li>
-            <li>Strategy: 40-60 Meetings / 3 Months</li>
-            <li>Fee: Engagement + Strategy %</li>
-          </ul>
-        </div>
-
-        <div class="glass-card reveal" style="transition-delay: 0.1s;">
-          <div style="font-size:2rem; margin-bottom:1rem;">🏢</div>
-          <h3>Private Equity Deal Flow</h3>
-          <p>Procure off-market deals and consistently reach investors even during market downturns.</p>
-          <ul>
-            <li>Proprietary Deal Sourcing</li>
-            <li>Exit Value Optimization</li>
-            <li>Direct Owner Outreach</li>
-            <li>Fee: % of Deal Value (0.5-2.5%)</li>
-          </ul>
-        </div>
-
-        <div class="glass-card reveal" style="transition-delay: 0.2s;">
-          <div style="font-size:2rem; margin-bottom:1rem;">🚀</div>
-          <h3>Corporate Capital Raise</h3>
-          <p>For growth-stage companies (Series A+) seeking institutional and accredited capital globally.</p>
-          <ul>
-            <li>10k-20k Investor Segment List</li>
-            <li>Sector Specific (Clean Tech, AI, etc)</li>
-            <li>Global Roadshow Coordination</li>
-            <li>Fee: Success Fee (4-6%)</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="process">
-    <div class="container">
-      <div class="text-center reveal">
-        <h2 class="section-title">The 4-Step Protocol</h2>
-        <p class="section-desc" style="margin: 0 auto 4rem;">From discovery to closing, our process is structured, transparent, and relentless.</p>
-      </div>
-
-      <div class="process-grid">
-        <div class="step-card reveal">
-          <div class="step-num">01</div>
-          <div class="step-content">
-            <h4>Sector Definition & List Building</h4>
-            <p style="color: var(--text-dim);">We align your investment criteria with market dynamics. We utilize our Rolodex for quick wins and our AI databases to build a curated list of 10,000 - 20,000 targeted investors (SWF, Family Offices, etc).</p>
+      <div class="container" style="position: relative; z-index: 2;">
+        <div class="reveal">
+          <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.1); padding:6px 12px; border-radius:20px; margin-bottom:24px; border:1px solid rgba(255,255,255,0.1);">
+            <span style="width:8px; height:8px; background:#22c55e; border-radius:50%; box-shadow:0 0 10px #22c55e;"></span>
+            <span style="font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:600;">Accepting Mandates</span>
           </div>
-        </div>
-
-        <div class="step-card reveal" style="transition-delay:0.1s">
-          <div class="step-num">02</div>
-          <div class="step-content">
-            <h4>Campaign Launch</h4>
-            <p style="color: var(--text-dim);">Deploy enterprise-grade outreach architecture. We create bespoke messaging and launch mass correspondence, iterating scripts daily based on data feedback loops.</p>
-          </div>
-        </div>
-
-        <div class="step-card reveal" style="transition-delay:0.2s">
-          <div class="step-num">03</div>
-          <div class="step-content">
-            <h4>Cultivate & Vet</h4>
-            <p style="color: var(--text-dim);">We filter the noise. We conduct background reports on every interested party ensuring your time is spent only on high-signal meetings with decision-makers.</p>
-          </div>
-        </div>
-
-        <div class="step-card reveal" style="transition-delay:0.3s">
-          <div class="step-num">04</div>
-          <div class="step-content">
-            <h4>Navigate & Close</h4>
-            <p style="color: var(--text-dim);">We manage the diligence room, assist in presentation prep, and support negotiations to ensure a swift transaction close.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="global" style="padding: 4rem 0; background: linear-gradient(to bottom, #020617, #0f172a);">
-    <div class="container text-center reveal">
-      <h2 class="section-title" style="font-size: 2rem; margin-bottom:2rem;">Global Capital Coverage</h2>
-      <img src="global-map.png" alt="Global Reach Map" style="max-width: 80%; margin: 0 auto; display: block; opacity: 0.8; filter: drop-shadow(0 0 20px var(--accent));">
-      <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
-        <span class="eyebrow">MENA / Gulf</span>
-        <span class="eyebrow">Singapore / Asia</span>
-        <span class="eyebrow">North America</span>
-        <span class="eyebrow">United Kingdom</span>
-        <span class="eyebrow">Australia</span>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="container">
-      <div class="form-wrapper reveal">
-        <div class="text-center">
-          <h2 class="section-title">Request Triage Call</h2>
-          <p style="color: var(--text-dim); margin-bottom: 2rem;">
-            We are selective with our mandates. Fill out the form below to see if your fund or deal fits our distribution model.
+          
+          <h1>
+            Institutional Access for <br />
+            <span class="shimmer">Funds & Private Deals.</span>
+          </h1>
+          
+          <p style="max-width: 600px; font-size: 1.2rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2.5rem;">
+            We don't just make introductions. We run an enterprise-grade distribution engine targeting 50,000+ institutional investors to scale your AUM or close your round.
           </p>
+
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn-primary" style="padding: 1rem 2.5rem;" onclick="document.getElementById('solutions').scrollIntoView()">
+              Explore Solutions
+            </button>
+            <button style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:1rem 2rem; border-radius:99px; font-weight:600; transition:0.3s;" onclick="document.getElementById('engine').scrollIntoView()">
+              How It Works
+            </button>
+          </div>
+
+          <div class="stats-bar">
+            <div class="stat">
+              <h4><span class="counter" data-target="100">0</span>M+</h4>
+              <p>Transactions Supported</p>
+            </div>
+            <div class="stat">
+              <h4><span class="counter" data-target="4000">0</span>+</h4>
+              <p>Personal Contacts</p>
+            </div>
+            <div class="stat">
+              <h4><span class="counter" data-target="50">0</span>k+</h4>
+              <p>Database Reach</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="engine" class="engine-section">
+      <video class="tech-video" autoplay muted loop playsinline>
+        <source src="network-lines.mp4" type="video/mp4">
+      </video>
+      
+      <div class="container">
+        <div class="reveal" style="max-width: 800px; margin: 0 auto; text-align: center; background: rgba(2,4,8,0.8); padding: 3rem; border-radius: 24px; border: 1px solid var(--border-light); backdrop-filter: blur(10px);">
+          <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">The Distribution Engine</h2>
+          <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">
+            The number one thing that differentiates us from traditional investment banks is <strong>distribution volume</strong>.
+            We recently shifted to working with funds after working alongside one of the largest investment banks in Vancouver.
+          </p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; text-align: left;">
+            <div>
+              <h3 class="text-accent" style="margin-bottom: 0.5rem;">Proprietary Data</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">
+                We've built internal software on top of existing infrastructure to pull contacts at a higher rate. We use AI/ML to constantly refine our 4,000+ personal Rolodex and broader 50k database.
+              </p>
+            </div>
+            <div>
+              <h3 class="text-accent" style="margin-bottom: 0.5rem;">Massive Scale</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">
+                We send outbound distributions at a rate of <strong>1,000 to 2,000 per day</strong> per client. This is an unparalleled level of distribution compared to traditional banking methods.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solutions" style="padding: 8rem 0;">
+      <div class="container">
+        <div class="reveal" style="margin-bottom: 4rem;">
+          <h2 style="font-size: 3rem; margin-bottom: 1rem;">Tailored Mandates</h2>
+          <p style="color: var(--text-muted); font-size: 1.2rem;">Select your structure to see how we execute.</p>
         </div>
 
-        <form onsubmit="event.preventDefault(); alert('Thank you. Our Investment Committee will review your mandate.');">
-          <div class="input-row">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" placeholder="John Doe" required>
-            </div>
-            <div class="form-group">
-              <label>Work Email</label>
-              <input type="email" placeholder="john@fund.com" required>
+        <div class="spotlight-group reveal">
+          
+          <div class="card">
+            <div style="font-size: 2rem; margin-bottom: 1.5rem;">📊</div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Hedge Fund Distribution</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+              For funds looking to scale AUM. We target Endowments, Pensions, and Family Offices that match your liquidity and tax efficiency profile.
+            </p>
+            <ul style="list-style: none; color: #e2e8f0; font-size: 0.9rem; line-height: 2;">
+              <li>✓ Target 40-60 Meetings in 3 months</li>
+              <li>✓ Average Ticket: $5M - $20M</li>
+              <li>✓ Recent Success: $100M for Tech Fund</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="font-size: 2rem; margin-bottom: 1.5rem;">🏢</div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Private Equity Deal Flow</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+              Procure off-market proprietary deals. We find owners before they go to market, ensuring consistent flow even in downturns.
+            </p>
+            <ul style="list-style: none; color: #e2e8f0; font-size: 0.9rem; line-height: 2;">
+              <li>✓ Case Study: North Star Equity Partners</li>
+              <li>✓ Result: $200M Exit Value Procured</li>
+              <li>✓ Direct Owner Outreach</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="font-size: 2rem; margin-bottom: 1.5rem;">🚀</div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Corporate Capital Raise</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+              For Series A+ companies. We build a segment list of 10k-20k investors and manage the funnel from outreach to closing.
+            </p>
+            <ul style="list-style: none; color: #e2e8f0; font-size: 0.9rem; line-height: 2;">
+              <li>✓ Case Study: Sky H20 (Clean Tech)</li>
+              <li>✓ Result: $100M+ Interest Tabled</li>
+              <li>✓ Semiconductor Deal: $32M Closed</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="global" style="padding: 6rem 0; background: radial-gradient(circle at center, #0f172a 0%, #020408 70%);">
+      <div class="container" style="text-align: center;">
+        <h2 class="reveal" style="font-size: 2.5rem; margin-bottom: 3rem;">Global Institutional Network</h2>
+        
+        <div class="map-container reveal">
+          <img src="global-map.png" alt="Global Reach" class="map-img">
+          
+          <div class="hotspot" style="top: 65%; left: 85%;" title="Brisbane (HQ)"></div>
+          <div class="hotspot" style="top: 30%; left: 22%;" title="New York"></div>
+          <div class="hotspot" style="top: 25%; left: 48%;" title="London"></div>
+          <div class="hotspot" style="top: 42%; left: 55%;" title="Dubai / MENA"></div>
+          <div class="hotspot" style="top: 45%; left: 72%;" title="Singapore"></div>
+        </div>
+        
+        <p class="reveal" style="color: var(--text-muted); max-width: 700px; margin: 0 auto;">
+          We have existing relationships with Sovereign Wealth Funds, Pension Funds, and Multi-Family Offices across MENA, Singapore, Japan, UK, and North America.
+        </p>
+      </div>
+    </section>
+
+    <section id="fees" style="padding: 8rem 0;">
+      <div class="container">
+        <h2 class="reveal" style="font-size: 2.5rem; margin-bottom: 1rem;">Transparent Commercials</h2>
+        <p class="reveal" style="color: var(--text-muted); margin-bottom: 3rem;">Our model aligns our incentives with your success.</p>
+
+        <div class="pricing-grid reveal">
+          <div class="price-card">
+            <span style="color: var(--accent); font-weight: 600; letter-spacing: 1px; font-size: 0.9rem;">UPFRONT ENGAGEMENT</span>
+            <div class="price-val">$5k - $25k</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+              Covers the 6-12 month system build-out, dedicated team lead, compliance, server infrastructure, and analyst time.
+            </p>
+            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.85rem;">
+              Includes System Setup & Domains
             </div>
           </div>
 
-          <div class="input-row">
-            <div class="form-group">
-              <label>Firm Name</label>
-              <input type="text" placeholder="Capital Partners Ltd" required>
+          <div class="price-card" style="border-color: var(--accent);">
+            <span style="color: var(--accent); font-weight: 600; letter-spacing: 1px; font-size: 0.9rem;">HEDGE FUNDS / PE</span>
+            <div class="price-val">0.5% - 2.5%</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+              Success fee on capital raised or deal value procured. Typically 0.5%-1% for Fund Distribution and up to 2.5% for PE Deal flow.
+            </p>
+            <div style="background: rgba(56,189,248,0.1); color: var(--accent); padding: 10px; border-radius: 8px; font-size: 0.85rem;">
+              Diligence & Closing Support
             </div>
-            <div class="form-group">
-              <label>Mandate Type</label>
-              <select required>
-                <option value="" disabled selected>Select Mandate...</option>
-                <option value="hedge">Hedge Fund (LP Distribution)</option>
-                <option value="pe">Private Equity (Deal Flow)</option>
+          </div>
+
+          <div class="price-card">
+            <span style="color: var(--accent); font-weight: 600; letter-spacing: 1px; font-size: 0.9rem;">DIRECT EQUITY RAISE</span>
+            <div class="price-val">4% - 6%</div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+              Success fee for corporate capital raises (Series A, B, etc). Percentage depends on the size of the round.
+            </p>
+            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.85rem;">
+              Global Roadshow Coordination
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="padding: 4rem 0 8rem;">
+      <div class="container">
+        <div class="form-box reveal">
+          <div style="text-align: center; margin-bottom: 3rem;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Request Triage Call</h2>
+            <p style="color: var(--text-muted);">
+              We are selective. Please provide a high-level overview of your mandate.<br>
+              Our Investment Committee reviews all submissions before booking.
+            </p>
+          </div>
+
+          <form onsubmit="event.preventDefault(); alert('Thank you. Our team will review your mandate and reach out within 48 hours.');">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <input type="text" placeholder="Full Name" required>
+              <input type="email" placeholder="Work Email" required>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <input type="text" placeholder="Firm / Company Name" required>
+              <select required style="background-color: rgba(2,4,8,0.5);">
+                <option value="" disabled selected>Select Mandate Type</option>
+                <option value="hedge">Hedge Fund Distribution</option>
+                <option value="pe">Private Equity Deal Flow</option>
                 <option value="corporate">Corporate Capital Raise</option>
               </select>
             </div>
-          </div>
 
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label>Target Raise / AUM Goal (USD)</label>
-            <input type="text" placeholder="e.g. $50M Raise or Scaling to $200M AUM">
-          </div>
+            <input type="text" placeholder="Target Raise / AUM Goal (e.g. $50M)" required>
+            
+            <textarea rows="4" placeholder="Brief Overview: Current challenges, strategies tried, and 6-12 month objectives." required></textarea>
 
-          <div class="form-group" style="margin-bottom: 2rem;">
-            <label>Brief Overview</label>
-            <textarea rows="4" placeholder="Tell us about your strategy, current challenges, and what you hope to achieve in the next 6-12 months."></textarea>
-          </div>
-
-          <button type="submit" class="btn-glow" style="width: 100%; padding: 1rem; font-size: 1rem;">Submit for Review</button>
-        </form>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 1.2rem; font-size: 1.1rem;">
+              Submit for Review
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer style="border-top: 1px solid var(--border); padding: 3rem 0; text-align: center; font-size: 0.9rem; color: var(--text-dim);">
+  </main>
+
+  <footer style="border-top: 1px solid var(--border-light); padding: 3rem 0; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
     <div class="container">
-      <p>&copy; 2025 Riyal Capital. Brisbane, Australia. Global Mandates Only.</p>
+      <p style="margin-bottom: 1rem;">&copy; 2025 Riyal Capital. All Rights Reserved.</p>
+      <p>Brisbane · New York · London · Dubai · Singapore</p>
     </div>
   </footer>
 
   <script>
-    // Scroll Header Effect
+    // 1. Header Scroll Effect
+    const header = document.getElementById('header');
     window.addEventListener('scroll', () => {
-      const header = document.getElementById('header');
       if (window.scrollY > 50) header.classList.add('scrolled');
       else header.classList.remove('scrolled');
     });
 
-    // Intersection Observer for Reveal Animations
+    // 2. Spotlight Effect for Cards
+    const spotlightGroups = document.querySelectorAll('.spotlight-group');
+    spotlightGroups.forEach(group => {
+      group.addEventListener('mousemove', e => {
+        const cards = group.querySelectorAll('.card');
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+    });
+
+    // 3. Reveal Animation Observer
+    const observerOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
-          // Trigger counters if present
-          if (entry.target.querySelector('.stat-block strong')) {
-            runCounters();
-          }
+          // Trigger Counters if inside
+          if (entry.target.querySelector('.counter')) startCounters(entry.target);
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15 });
-
+    }, observerOptions);
+    
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Number Counter Logic
-    function runCounters() {
-      const counters = document.querySelectorAll('.stat-block strong');
+    // 4. Number Counters
+    function startCounters(container) {
+      const counters = container.querySelectorAll('.counter');
       counters.forEach(counter => {
         const target = +counter.getAttribute('data-target');
-        const duration = 3000; // 3 seconds
+        const duration = 2000;
         const increment = target / (duration / 16);
-        
         let current = 0;
-        const updateCounter = () => {
+        const update = () => {
           current += increment;
           if (current < target) {
-            counter.textContent = Math.ceil(current) + (target > 10 ? '+' : '');
-            requestAnimationFrame(updateCounter);
+            counter.textContent = Math.ceil(current);
+            requestAnimationFrame(update);
           } else {
-            counter.textContent = target + '+';
+            counter.textContent = target;
           }
         };
-        updateCounter();
+        update();
       });
     }
   </script>
