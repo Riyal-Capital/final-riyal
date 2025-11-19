@@ -2,22 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Riyal Capital – Global Fundraising & Distribution</title>
+  <title>Riyal Capital | The Distribution Engine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Global distribution for Hedge Funds, Private Equity, and Corporate Capital Raises. Powered by AI and a network of 4,000+ institutional investors." />
   <style>
     :root {
       --bg: #020617;
-      --accent: #38bdf8;
-      --accent-glow: rgba(56,189,248,0.4);
-      --text: #f8fafc;
+      --bg-card: rgba(15, 23, 42, 0.7);
+      --accent: #38bdf8; /* Sky Blue */
+      --accent-glow: rgba(56,189,248,0.5);
+      --text: #f1f5f9;
       --text-dim: #94a3b8;
-      --card-bg: rgba(15, 23, 42, 0.6);
-      --border: rgba(148, 163, 184, 0.15);
-      --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+      --border: rgba(148, 163, 184, 0.1);
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -29,480 +29,465 @@
       position: relative;
     }
 
-    /* --- AMBIENT BACKGROUND EFFECTS (The "Aurora") --- */
-    .ambient-light {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
+    /* --- ANIMATED BACKGROUNDS --- */
+    .video-layer {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: -2; opacity: 0.4;
+      filter: contrast(1.2) saturate(1.1);
+    }
+    
+    .overlay-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(2,6,23,0.8), var(--bg));
       z-index: -1;
-      overflow: hidden;
-    }
-    .blob {
-      position: absolute;
-      filter: blur(80px);
-      opacity: 0.4;
-      animation: float 20s infinite alternate ease-in-out;
-    }
-    .blob-1 {
-      top: -10%; left: -10%; width: 500px; height: 500px;
-      background: radial-gradient(circle, #0c4a6e, transparent);
-    }
-    .blob-2 {
-      bottom: 10%; right: -10%; width: 600px; height: 600px;
-      background: radial-gradient(circle, #0ea5e9, transparent);
-      animation-delay: -5s;
-    }
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(50px, 50px) scale(1.1); }
     }
 
+    /* --- UTILITIES --- */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .text-accent { color: var(--accent); }
+    .text-center { text-align: center; }
+    
     /* --- HEADER --- */
     header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      transition: 0.4s var(--ease-out);
-      padding: 1.5rem 0;
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 1.5rem 0; transition: 0.4s var(--ease);
       border-bottom: 1px solid transparent;
     }
     header.scrolled {
-      padding: 1rem 0;
-      background: rgba(2, 6, 23, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(2, 6, 23, 0.9);
+      backdrop-filter: blur(15px);
       border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
     }
-    .nav-wrapper {
-      max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .logo { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; color: white; }
-    .logo img { height: 45px; width: auto; filter: drop-shadow(0 0 15px var(--accent-glow)); }
-    .logo-text h1 { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
-    .logo-text p { font-size: 0.7rem; text-transform: uppercase; color: var(--accent); letter-spacing: 0.2em; margin-top: 2px; }
-
-    nav ul { display: flex; gap: 2rem; list-style: none; }
-    nav a {
-      color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-weight: 500;
-      transition: 0.3s; position: relative;
-    }
-    nav a:hover { color: white; text-shadow: 0 0 10px var(--accent-glow); }
+    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
     
-    .cta-btn {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: white; border: none; padding: 0.7rem 1.8rem;
-      border-radius: 50px; font-weight: 600; cursor: pointer;
-      box-shadow: 0 10px 30px -10px var(--accent);
-      transition: transform 0.3s, box-shadow 0.3s;
-      text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; }
+    .logo img { height: 45px; width: auto; filter: drop-shadow(0 0 10px var(--accent-glow)); }
+    .logo-text { text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; font-size: 1.1rem; }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--text-dim); text-decoration: none; font-size: 0.85rem; 
+      text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s;
     }
-    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -10px var(--accent); }
+    .nav-links a:hover { color: white; text-shadow: 0 0 8px var(--accent); }
+
+    .btn-glow {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+      padding: 0.6rem 1.5rem; border-radius: 50px; cursor: pointer;
+      font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;
+      transition: 0.3s; box-shadow: 0 0 10px rgba(56,189,248,0.1);
+    }
+    .btn-glow:hover {
+      background: var(--accent); color: #000;
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
 
     /* --- HERO SECTION --- */
     .hero {
-      position: relative;
-      height: 100vh;
-      min-height: 700px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      position: relative; height: 100vh; min-height: 750px;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
     }
+    .hero-content { position: relative; z-index: 10; max-width: 900px; padding: 0 1rem; }
     
-    /* VIDEO BACKGROUND */
-    .video-bg {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: -2;
-      filter: saturate(1.1) contrast(1.1);
-    }
-    
-    /* DARK OVERLAY (Crucial for text readability) */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(2,6,23,0.7) 0%, rgba(2,6,23,0.4) 50%, rgba(2,6,23,1) 100%);
-      z-index: -1;
-    }
-    
-    .hero-content {
-      text-align: center;
-      max-width: 900px;
-      padding: 0 1.5rem;
-      z-index: 1;
-      opacity: 0;
-      animation: fadeUp 1s var(--ease-out) forwards 0.5s;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 0.4rem 1rem;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 50px;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 1.5rem;
-      background: rgba(0,0,0,0.3);
-      backdrop-filter: blur(5px);
+    .eyebrow {
+      display: inline-block; padding: 0.5rem 1.2rem;
+      background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 100px; margin-bottom: 2rem;
+      color: var(--accent); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
+      animation: pulse 3s infinite;
     }
 
     h1 {
-      font-size: clamp(3rem, 6vw, 5rem);
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
+      font-size: clamp(3.5rem, 6vw, 5.5rem); line-height: 1.1; font-weight: 800;
+      margin-bottom: 2rem; letter-spacing: -0.02em;
+    }
+    .shimmer-text {
+      background: linear-gradient(90deg, #fff 0%, #38bdf8 50%, #fff 100%);
+      background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shimmer 5s linear infinite;
     }
 
-    /* SHIMMER TEXT EFFECT */
-    .shimmer {
-      background: linear-gradient(to right, #fff 20%, #38bdf8 40%, #38bdf8 60%, #fff 80%);
-      background-size: 200% auto;
-      color: transparent;
-      -webkit-background-clip: text;
-      background-clip: text;
-      animation: shine 4s linear infinite;
-    }
-    @keyframes shine { to { background-position: 200% center; } }
+    .hero p { font-size: 1.2rem; color: var(--text-dim); max-width: 650px; margin: 0 auto 3rem; }
 
-    .hero p {
-      font-size: 1.2rem;
-      color: #cbd5e1;
-      max-width: 600px;
-      margin: 0 auto 2.5rem;
+    .hero-stats {
+      display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
+      margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
     }
+    .stat-block strong { display: block; font-size: 2.5rem; color: white; line-height: 1; margin-bottom: 0.5rem; }
+    .stat-block span { color: var(--accent); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
 
-    /* --- STATS COUNTER --- */
-    .stats-row {
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      margin-top: 4rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 2rem;
-    }
-    .stat-item { text-align: center; }
-    .stat-number {
-      display: block;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: white;
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      margin-top: 0.5rem;
-    }
+    /* --- SECTIONS --- */
+    section { padding: 8rem 0; position: relative; overflow: hidden; }
+    .section-title { font-size: 3rem; margin-bottom: 1.5rem; font-weight: 700; }
+    .section-desc { font-size: 1.1rem; color: var(--text-dim); max-width: 600px; margin-bottom: 4rem; }
 
-    /* --- GENERAL LAYOUT --- */
-    section { padding: 8rem 0; position: relative; }
-    .container { max-width: 1140px; margin: 0 auto; padding: 0 1.5rem; }
+    /* --- CARDS & GRID --- */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
     
-    .section-header { margin-bottom: 5rem; }
-    .section-tag { color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; margin-bottom: 1rem; display: block; }
-    .section-title { font-size: 3rem; margin-bottom: 1rem; }
-
-    /* --- 3D TILT CARDS --- */
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
-      perspective: 1000px; /* Needed for 3D effect */
+    .glass-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 2.5rem;
+      transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.3s;
+      position: relative; overflow: hidden;
     }
-
-    .tilt-card {
-      background: linear-gradient(145deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.6));
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 20px;
-      padding: 2.5rem;
-      transition: transform 0.1s ease, box-shadow 0.3s ease; /* Quick transform for mouse follow */
-      transform-style: preserve-3d;
-      position: relative;
-      overflow: hidden;
+    .glass-card:hover {
+      transform: translateY(-10px); border-color: var(--accent);
+      box-shadow: 0 20px 60px -20px rgba(56,189,248,0.3);
     }
-    
-    /* Hover Glow Overlay */
-    .tilt-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56,189,248,0.15), transparent 50%);
-      opacity: 0;
-      transition: opacity 0.5s;
-      pointer-events: none;
-    }
-    .tilt-card:hover::after { opacity: 1; }
-    .tilt-card:hover { border-color: var(--accent); box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5); }
+    .glass-card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: white; }
+    .glass-card p { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .glass-card ul { list-style: none; }
+    .glass-card li { margin-bottom: 0.8rem; color: #cbd5e1; font-size: 0.9rem; display: flex; gap: 0.5rem; }
+    .glass-card li::before { content: "▹"; color: var(--accent); }
 
-    .card-icon { font-size: 2rem; margin-bottom: 1.5rem; display: block; color: var(--accent); transform: translateZ(20px); }
-    .card-title { font-size: 1.4rem; margin-bottom: 1rem; color: white; transform: translateZ(30px); }
-    .card-text { color: var(--text-dim); font-size: 0.95rem; transform: translateZ(20px); }
-
-    /* --- ANIMATION CLASSES --- */
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    
-    .reveal-on-scroll { opacity: 0; transform: translateY(40px); transition: 1s var(--ease-out); }
-    .reveal-on-scroll.active { opacity: 1; transform: translateY(0); }
-
-    /* --- FORM --- */
-    .form-container {
-      background: rgba(15,23,42,0.8);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 3rem;
-      max-width: 700px;
-      margin: 0 auto;
-      backdrop-filter: blur(10px);
-    }
-    .input-group { margin-bottom: 1.5rem; }
-    .input-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
-    .input-group input, .input-group textarea, .input-group select {
-      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
-      padding: 1rem; border-radius: 12px; color: white; font-family: inherit;
+    /* --- PROCESS STEPS (Vertical) --- */
+    .process-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .step-card {
+      display: grid; grid-template-columns: 80px 1fr; gap: 2rem;
+      background: linear-gradient(90deg, rgba(15,23,42,0.8), transparent);
+      border-left: 2px solid var(--border); padding: 2rem;
       transition: 0.3s;
     }
-    .input-group input:focus, .input-group textarea:focus {
-      outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(56,189,248,0.1);
+    .step-card:hover { border-left-color: var(--accent); background: linear-gradient(90deg, rgba(15,23,42,1), rgba(56,189,248,0.05)); }
+    .step-num { font-size: 3rem; font-weight: 800; color: rgba(255,255,255,0.1); line-height: 1; }
+    .step-content h4 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent); }
+
+    /* --- DISTRIBUTION ENGINE (Tech) --- */
+    .tech-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .tech-visual {
+      position: relative; height: 400px; border-radius: 24px; overflow: hidden;
+      border: 1px solid var(--border); box-shadow: 0 0 50px rgba(56,189,248,0.1);
     }
+    .tech-visual img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* --- FOOTER --- */
-    footer { background: #000; padding: 4rem 0; border-top: 1px solid var(--border); font-size: 0.9rem; color: var(--text-dim); }
-    .footer-content { display: flex; justify-content: space-between; align-items: center; }
+    /* --- CONTACT FORM --- */
+    .form-wrapper {
+      background: #0f172a; border-radius: 30px; padding: 3rem;
+      border: 1px solid var(--border); max-width: 700px; margin: 0 auto;
+      box-shadow: 0 0 80px rgba(0,0,0,0.5);
+    }
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: var(--text-dim); }
+    input, select, textarea {
+      width: 100%; background: rgba(2,6,23,0.6); border: 1px solid var(--border);
+      padding: 1rem; border-radius: 12px; color: white; outline: none;
+      transition: 0.3s; font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
 
+    /* --- ANIMATIONS --- */
+    @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(56,189,248,0.4); } 70% { box-shadow: 0 0 0 10px rgba(56,189,248,0); } 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0); } }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s var(--ease); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* MOBILE */
     @media(max-width: 768px) {
-      h1 { font-size: 2.8rem; }
-      .stats-row { flex-direction: column; gap: 2rem; }
-      .nav-wrapper nav { display: none; } /* Simple hide for mobile demo */
-      .hero-content { padding-top: 4rem; }
+      h1 { font-size: 3rem; }
+      .tech-layout { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .input-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <div class="ambient-light">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-  </div>
-
-  <header id="navbar">
-    <div class="nav-wrapper">
+  <header id="header">
+    <div class="container nav-flex">
       <a href="#" class="logo">
-        <img src="lion-logo.png" alt="Riyal Capital Lion" onerror="this.style.display='none'"/> 
-        <div class="logo-text">
-          <h1>Riyal Capital</h1>
-          <p>Global Distribution</p>
-        </div>
+        <img src="lion-logo.png" alt="Riyal Lion">
+        <div class="logo-text">Riyal Capital</div>
       </a>
-      <nav>
-        <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#solutions">Solutions</a></li>
-          <li><a href="#experience">Experience</a></li>
-        </ul>
-      </nav>
-      <button class="cta-btn" onclick="document.getElementById('contact').scrollIntoView()">Book Triage</button>
+      <ul class="nav-links">
+        <li><a href="#approach">Approach</a></li>
+        <li><a href="#solutions">Solutions</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="btn-glow" onclick="document.getElementById('contact').scrollIntoView()">Book Triage</button>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <video class="video-bg" autoplay muted loop playsinline poster="assets/poster.jpg">
-        <source src="hero-background.mp4" type="video/mp4">
-      </video>
-      <div class="overlay"></div>
+  <section class="hero">
+    <video class="video-layer" autoplay muted loop playsinline>
+      <source src="hero-background.mp4" type="video/mp4">
+    </video>
+    <div class="overlay-gradient"></div>
 
-      <div class="hero-content">
-        <span class="pill">Brisbane Headquarters · Global Reach</span>
-        <h1>
-          Institutional access for<br>
-          <span class="shimmer">Funds & Private Deals.</span>
-        </h1>
-        <p>
-          We partner with hedge funds, PE firms, and growth companies to raise capital using 
-          proprietary data and high-volume, targeted outreach.
-        </p>
-        
-        <button class="cta-btn" style="padding: 1rem 2.5rem; font-size: 0.9rem;" onclick="document.getElementById('solutions').scrollIntoView()">
-          Explore Solutions
+    <div class="hero-content">
+      <div class="eyebrow reveal">Distribution First Capital Advisory</div>
+      <h1 class="reveal" style="transition-delay: 0.1s;">
+        The Engine for <br/>
+        <span class="shimmer-text">Global Capital.</span>
+      </h1>
+      <p class="reveal" style="transition-delay: 0.2s;">
+        We don't just make introductions. We run enterprise-grade distribution campaigns targeting 50,000+ institutional investors to scale your fund or close your round.
+      </p>
+      
+      <div class="reveal" style="transition-delay: 0.3s;">
+        <button class="btn-glow" style="padding: 1rem 2.5rem; font-size: 0.9rem;" onclick="document.getElementById('solutions').scrollIntoView()">
+          Explore Mandates
         </button>
+      </div>
 
-        <div class="stats-row">
-          <div class="stat-item">
-            <span class="stat-number" data-target="100">0</span>
-            <span class="stat-label">$ Million Transactions</span>
+      <div class="hero-stats reveal" style="transition-delay: 0.4s;">
+        <div class="stat-block">
+          <strong data-target="4000">0</strong>
+          <span>Personal Contacts</span>
+        </div>
+        <div class="stat-block">
+          <strong data-target="2000">0</strong>
+          <span>Daily Touches</span>
+        </div>
+        <div class="stat-block">
+          <strong data-target="100">0</strong>
+          <span>$M+ Transactions</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="approach">
+    <div class="container tech-layout">
+      <div class="reveal">
+        <span class="text-accent" style="letter-spacing:0.2em; text-transform:uppercase; font-size:0.8rem;">Our Philosophy</span>
+        <h2 class="section-title">More Than Investment Banking.</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-dim);">
+          Most firms focus on the pitch deck. We focus on the phone lines. Born from a major Canadian investment bank, Riyal Capital pivoted to solve the hardest problem in finance: <strong>Distribution at Scale.</strong>
+        </p>
+        <p style="margin-bottom: 1.5rem; color: var(--text-dim);">
+          We utilize proprietary AI/ML software layered over major global databases to target Sovereign Wealth Funds, Pensions, and Family Offices in MENA, Asia, and North America.
+        </p>
+        <ul style="list-style:none; color: white;">
+          <li style="margin-bottom:0.5rem;">✓ 4,000+ Personal Institutional Relationships</li>
+          <li style="margin-bottom:0.5rem;">✓ 50,000+ Curated Investor Database</li>
+          <li style="margin-bottom:0.5rem;">✓ 1,000–2,000 Outbound touches per day</li>
+        </ul>
+      </div>
+      <div class="tech-visual reveal" style="transition-delay: 0.2s;">
+        <video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
+          <source src="network-lines.mp4" type="video/mp4">
+        </video>
+        <div style="position:absolute; bottom:20px; left:20px; background:rgba(0,0,0,0.7); padding:10px; border-radius:8px; border:1px solid var(--accent);">
+          <div style="color:var(--accent); font-size:0.8rem; font-weight:bold;">SYSTEM ACTIVE</div>
+          <div style="color:white; font-size:0.7rem;">Global Outreach: ONLINE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solutions" style="background: rgba(255,255,255,0.02);">
+    <div class="container">
+      <div class="text-center reveal">
+        <h2 class="section-title">Targeted Mandates</h2>
+        <p class="section-desc" style="margin: 0 auto 4rem;">Whether you are scaling AUM or exiting a portfolio company, our system adapts to your liquidity and sector needs.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="glass-card reveal">
+          <div style="font-size:2rem; margin-bottom:1rem;">📊</div>
+          <h3>Hedge Fund Distribution</h3>
+          <p>Scale your LP base with investors whose mandate matches your horizon and tax efficiency.</p>
+          <ul>
+            <li>Targeting Endowments & Pensions</li>
+            <li>Focus on AUM Scaling</li>
+            <li>Strategy: 40-60 Meetings / 3 Months</li>
+            <li>Fee: Engagement + Strategy %</li>
+          </ul>
+        </div>
+
+        <div class="glass-card reveal" style="transition-delay: 0.1s;">
+          <div style="font-size:2rem; margin-bottom:1rem;">🏢</div>
+          <h3>Private Equity Deal Flow</h3>
+          <p>Procure off-market deals and consistently reach investors even during market downturns.</p>
+          <ul>
+            <li>Proprietary Deal Sourcing</li>
+            <li>Exit Value Optimization</li>
+            <li>Direct Owner Outreach</li>
+            <li>Fee: % of Deal Value (0.5-2.5%)</li>
+          </ul>
+        </div>
+
+        <div class="glass-card reveal" style="transition-delay: 0.2s;">
+          <div style="font-size:2rem; margin-bottom:1rem;">🚀</div>
+          <h3>Corporate Capital Raise</h3>
+          <p>For growth-stage companies (Series A+) seeking institutional and accredited capital globally.</p>
+          <ul>
+            <li>10k-20k Investor Segment List</li>
+            <li>Sector Specific (Clean Tech, AI, etc)</li>
+            <li>Global Roadshow Coordination</li>
+            <li>Fee: Success Fee (4-6%)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="container">
+      <div class="text-center reveal">
+        <h2 class="section-title">The 4-Step Protocol</h2>
+        <p class="section-desc" style="margin: 0 auto 4rem;">From discovery to closing, our process is structured, transparent, and relentless.</p>
+      </div>
+
+      <div class="process-grid">
+        <div class="step-card reveal">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>Sector Definition & List Building</h4>
+            <p style="color: var(--text-dim);">We align your investment criteria with market dynamics. We utilize our Rolodex for quick wins and our AI databases to build a curated list of 10,000 - 20,000 targeted investors (SWF, Family Offices, etc).</p>
           </div>
-          <div class="stat-item">
-            <span class="stat-number" data-target="50">0</span>
-            <span class="stat-label">k+ Investor Profiles</span>
+        </div>
+
+        <div class="step-card reveal" style="transition-delay:0.1s">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>Campaign Launch</h4>
+            <p style="color: var(--text-dim);">Deploy enterprise-grade outreach architecture. We create bespoke messaging and launch mass correspondence, iterating scripts daily based on data feedback loops.</p>
           </div>
-          <div class="stat-item">
-            <span class="stat-number" data-target="4">0</span>
-            <span class="stat-label">Continents Covered</span>
+        </div>
+
+        <div class="step-card reveal" style="transition-delay:0.2s">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>Cultivate & Vet</h4>
+            <p style="color: var(--text-dim);">We filter the noise. We conduct background reports on every interested party ensuring your time is spent only on high-signal meetings with decision-makers.</p>
+          </div>
+        </div>
+
+        <div class="step-card reveal" style="transition-delay:0.3s">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>Navigate & Close</h4>
+            <p style="color: var(--text-dim);">We manage the diligence room, assist in presentation prep, and support negotiations to ensure a swift transaction close.</p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="solutions">
-      <div class="container">
-        <div class="section-header reveal-on-scroll">
-          <span class="section-tag">What We Do</span>
-          <h2 class="section-title">Distribution First.</h2>
-          <p style="max-width: 600px; color: var(--text-dim);">
-            Most advisory firms focus on the slide deck. We focus on the phone lines. 
-            We are an engine designed to put your mandate in front of the right capital.
+  <section id="global" style="padding: 4rem 0; background: linear-gradient(to bottom, #020617, #0f172a);">
+    <div class="container text-center reveal">
+      <h2 class="section-title" style="font-size: 2rem; margin-bottom:2rem;">Global Capital Coverage</h2>
+      <img src="global-map.png" alt="Global Reach Map" style="max-width: 80%; margin: 0 auto; display: block; opacity: 0.8; filter: drop-shadow(0 0 20px var(--accent));">
+      <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
+        <span class="eyebrow">MENA / Gulf</span>
+        <span class="eyebrow">Singapore / Asia</span>
+        <span class="eyebrow">North America</span>
+        <span class="eyebrow">United Kingdom</span>
+        <span class="eyebrow">Australia</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container">
+      <div class="form-wrapper reveal">
+        <div class="text-center">
+          <h2 class="section-title">Request Triage Call</h2>
+          <p style="color: var(--text-dim); margin-bottom: 2rem;">
+            We are selective with our mandates. Fill out the form below to see if your fund or deal fits our distribution model.
           </p>
         </div>
 
-        <div class="grid-3">
-          <div class="tilt-card reveal-on-scroll">
-            <span class="card-icon">✦</span>
-            <h3 class="card-title">Hedge Fund Distribution</h3>
-            <p class="card-text">
-              Scale your LP base with institutional investors whose mandate matches your strategy and liquidity.
-              Daily outbound via our dedicated IR team.
-            </p>
+        <form onsubmit="event.preventDefault(); alert('Thank you. Our Investment Committee will review your mandate.');">
+          <div class="input-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label>Work Email</label>
+              <input type="email" placeholder="john@fund.com" required>
+            </div>
           </div>
-          <div class="tilt-card reveal-on-scroll" style="transition-delay: 0.1s">
-            <span class="card-icon">❖</span>
-            <h3 class="card-title">Private Equity Deal Flow</h3>
-            <p class="card-text">
-              Build a consistent pipeline of off-market and lightly shopped deals. 
-              We use database-driven sourcing to find owners before they go to market.
-            </p>
-          </div>
-          <div class="tilt-card reveal-on-scroll" style="transition-delay: 0.2s">
-            <span class="card-icon">↗</span>
-            <h3 class="card-title">Corporate Capital Raises</h3>
-            <p class="card-text">
-              For growth-stage companies seeking accredited capital. We manage the entire funnel 
-              from initial outreach to meeting scheduling and closing support.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section id="contact">
-      <div class="container">
-        <div class="form-container reveal-on-scroll">
-          <div style="text-align: center; margin-bottom: 2rem;">
-            <h2 class="section-title" style="font-size: 2rem;">Start the Conversation</h2>
-            <p style="color: var(--text-dim);">Tell us about your mandate. We'll tell you if we can help.</p>
-          </div>
-          <form onsubmit="event.preventDefault(); alert('Request sent!');">
-            <div class="input-group">
-              <label>Name</label>
-              <input type="text" placeholder="Your Name" required>
+          <div class="input-row">
+            <div class="form-group">
+              <label>Firm Name</label>
+              <input type="text" placeholder="Capital Partners Ltd" required>
             </div>
-            <div class="input-group">
-              <label>Email</label>
-              <input type="email" placeholder="name@firm.com" required>
-            </div>
-            <div class="input-group">
+            <div class="form-group">
               <label>Mandate Type</label>
-              <select>
-                <option>Hedge Fund Distribution</option>
-                <option>Private Equity / Deal Flow</option>
-                <option>Direct Company Raise</option>
+              <select required>
+                <option value="" disabled selected>Select Mandate...</option>
+                <option value="hedge">Hedge Fund (LP Distribution)</option>
+                <option value="pe">Private Equity (Deal Flow)</option>
+                <option value="corporate">Corporate Capital Raise</option>
               </select>
             </div>
-            <button class="cta-btn" style="width: 100%; padding: 1rem;">Submit Request</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
+          </div>
 
-  <footer>
-    <div class="container footer-content">
-      <div>© 2025 Riyal Capital. Brisbane, Australia.</div>
-      <div>Global Distribution Partners.</div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Target Raise / AUM Goal (USD)</label>
+            <input type="text" placeholder="e.g. $50M Raise or Scaling to $200M AUM">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 2rem;">
+            <label>Brief Overview</label>
+            <textarea rows="4" placeholder="Tell us about your strategy, current challenges, and what you hope to achieve in the next 6-12 months."></textarea>
+          </div>
+
+          <button type="submit" class="btn-glow" style="width: 100%; padding: 1rem; font-size: 1rem;">Submit for Review</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid var(--border); padding: 3rem 0; text-align: center; font-size: 0.9rem; color: var(--text-dim);">
+    <div class="container">
+      <p>&copy; 2025 Riyal Capital. Brisbane, Australia. Global Mandates Only.</p>
     </div>
   </footer>
 
   <script>
-    // --- 1. SLOW COUNTER ANIMATION ---
-    const startCounters = () => {
-      const counters = document.querySelectorAll('.stat-number');
+    // Scroll Header Effect
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 50) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+
+    // Intersection Observer for Reveal Animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          // Trigger counters if present
+          if (entry.target.querySelector('.stat-block strong')) {
+            runCounters();
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Number Counter Logic
+    function runCounters() {
+      const counters = document.querySelectorAll('.stat-block strong');
       counters.forEach(counter => {
         const target = +counter.getAttribute('data-target');
-        // Increased duration to 4000ms (4 seconds) for "slow" effect
-        const duration = 4000; 
-        const increment = target / (duration / 16); 
+        const duration = 3000; // 3 seconds
+        const increment = target / (duration / 16);
         
         let current = 0;
         const updateCounter = () => {
           current += increment;
           if (current < target) {
-            counter.innerText = Math.ceil(current);
-            if(counter.getAttribute('data-target') === '100' || counter.getAttribute('data-target') === '50') {
-               counter.innerText += "+"; // Keep the plus sign dynamically
-            }
+            counter.textContent = Math.ceil(current) + (target > 10 ? '+' : '');
             requestAnimationFrame(updateCounter);
           } else {
-            counter.innerText = target + "+";
-            // Special handling for the continents counter (no plus)
-            if (target === 4) counter.innerText = target; 
+            counter.textContent = target + '+';
           }
         };
         updateCounter();
       });
-    };
-
-    // --- 2. SCROLL REVEAL OBSERVER ---
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-          // Only start counters when stats row is visible
-          if (entry.target.querySelector('.stat-number')) {
-            startCounters();
-          }
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.2 });
-
-    document.querySelectorAll('.reveal-on-scroll, .hero-content').forEach(el => observer.observe(el));
-
-    // --- 3. NAVBAR SCROLL EFFECT ---
-    window.addEventListener('scroll', () => {
-      const nav = document.getElementById('navbar');
-      if (window.scrollY > 50) nav.classList.add('scrolled');
-      else nav.classList.remove('scrolled');
-    });
-
-    // --- 4. 3D TILT CARD EFFECT ---
-    // This calculates mouse position relative to card center to rotate it
-    document.querySelectorAll('.tilt-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Calculate rotation (max 10deg)
-        const xRotation = ((y - rect.height / 2) / rect.height) * -10; 
-        const yRotation = ((x - rect.width / 2) / rect.width) * 10;
-        
-        // Set CSS variables for the glow effect
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-        
-        // Apply transform
-        card.style.transform = `perspective(1000px) scale(1.02) rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
-      });
-
-      card.addEventListener('mouseleave', () => {
-        // Reset on leave
-        card.style.transform = 'perspective(1000px) scale(1) rotateX(0) rotateY(0)';
-      });
-    });
+    }
   </script>
 </body>
 </html>
